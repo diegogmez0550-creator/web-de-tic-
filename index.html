@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Negocio Electrónico, Comercio Electrónico y Banca Electrónica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --paper-dark:#EDE8DB;
+    --ink:#16233A;
+    --teal:#1F7A6C;
+    --coral:#E2703A;
+    --grey:#8B8478;
+    --line:#D8D2C2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation:none !important; transition:none !important;}
+  }
+
+  h1,h2,h3{ font-family:'Fraunces', serif; color:var(--ink); }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  a{ color:var(--teal); }
+  a:focus-visible, button:focus-visible{ outline:3px solid var(--coral); outline-offset:3px; }
+
+  /* ---------- Barcode divider ---------- */
+  .barcode{
+    height:22px;
+    background-image: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 5px, var(--ink) 5px 6px, transparent 6px 11px, var(--ink) 11px 14px, transparent 14px 18px);
+    opacity:0.75;
+    margin:0 auto;
+  }
+  .dotted{
+    border:none;
+    border-top:2px dashed var(--line);
+    margin:2.5rem 0;
+  }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,243,236,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+    display:flex; gap:1.2rem; align-items:center;
+    padding:0.9rem 1.5rem;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  nav .brand{ font-family:'Fraunces', serif; font-weight:700; margin-right:auto; font-size:1.05rem; }
+  nav a{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    text-decoration:none;
+    color:var(--ink);
+    letter-spacing:0.03em;
+    padding:0.3rem 0;
+    border-bottom:2px solid transparent;
+  }
+  nav a:hover{ border-bottom:2px solid var(--coral); }
+
+  /* ---------- Hero / Portada = "Recibo" ---------- */
+  .receipt-wrap{
+    max-width:640px;
+    margin:3rem auto 2rem;
+    padding:0 1.2rem;
+  }
+  .receipt{
+    background:#fff;
+    border:1px solid var(--line);
+    box-shadow:0 18px 40px -20px rgba(22,35,58,0.35);
+    padding:2.6rem 2.2rem 2rem;
+    position:relative;
+  }
+  .receipt::before, .receipt::after{
+    content:"";
+    position:absolute; left:0; right:0; height:14px;
+    background:
+      radial-gradient(circle at 8px 0, transparent 8px, #fff 8.5px) repeat-x;
+    background-size:16px 16px;
+  }
+  .receipt::before{ top:-13px; transform:rotate(180deg); background-color:var(--paper); }
+  .receipt::after{ bottom:-13px; background-color:var(--paper); }
+
+  .receipt .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    color:var(--grey);
+    text-transform:uppercase;
+  }
+  .receipt h1{
+    font-size:clamp(1.6rem, 5vw, 2.15rem);
+    line-height:1.15;
+    margin:0.6rem 0 1.1rem;
+  }
+  .receipt-row{
+    display:flex; justify-content:space-between; gap:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    padding:0.35rem 0;
+    color:var(--ink);
+  }
+  .receipt-row span:first-child{ color:var(--grey); }
+  .receipt-total{
+    display:flex; justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:0.95rem;
+    padding-top:0.8rem;
+    margin-top:0.6rem;
+    border-top:2px solid var(--ink);
+  }
+  .stamp{
+    display:inline-block;
+    margin-top:1.4rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--teal);
+    border:1.5px solid var(--teal);
+    padding:0.3rem 0.6rem;
+    transform:rotate(-3deg);
+    letter-spacing:0.08em;
+  }
+
+  /* ---------- Sections ---------- */
+  section{
+    max-width:760px;
+    margin:0 auto;
+    padding:3.4rem 1.4rem;
+  }
+  .item-code{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.75rem;
+    color:var(--teal);
+    letter-spacing:0.1em;
+    display:block;
+    margin-bottom:0.5rem;
+  }
+  section h2{
+    font-size:clamp(1.5rem, 4vw, 2rem);
+    margin-bottom:1rem;
+  }
+  section p{ margin-bottom:1rem; max-width:65ch; }
+  .lede{
+    font-family:'Fraunces', serif;
+    font-size:1.15rem;
+    color:var(--ink);
+  }
+
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    padding:1.4rem 1.5rem;
+    margin-top:1.2rem;
+  }
+  .card h3{
+    font-size:1.05rem;
+    margin-bottom:0.5rem;
+    display:flex; align-items:center; gap:0.5rem;
+  }
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    background:var(--paper-dark);
+    color:var(--ink);
+    padding:0.15rem 0.5rem;
+    border-radius:2px;
+  }
+
+  .grid3{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1rem;
+    margin-top:1.5rem;
+  }
+  @media (max-width:680px){ .grid3{ grid-template-columns:1fr; } }
+
+  /* ---------- Infografía / ticker ---------- */
+  .infografia{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .infografia h2{ color:var(--paper); }
+  .infografia .item-code{ color:#7FD8C4; }
+  .stat-row{
+    display:flex; flex-wrap:wrap; gap:1rem;
+    margin-top:1.6rem;
+  }
+  .stat{
+    flex:1 1 200px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.15);
+    padding:1.2rem;
+  }
+  .stat .num{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:2.4rem;
+    color:#7FD8C4;
+    line-height:1;
+  }
+  .stat .label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:#C9C4B4;
+    margin-top:0.5rem;
+    display:block;
+  }
+  svg#chart{ width:100%; height:auto; margin-top:2rem; }
+  .chart-caption{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    color:#8f8c81;
+    margin-top:0.6rem;
+  }
+
+  /* ---------- Videos ---------- */
+  .video-slot{
+    position:relative;
+    padding-top:56.25%;
+    background:var(--paper-dark);
+    border:1px dashed var(--grey);
+    margin-top:1rem;
+  }
+  .video-slot iframe{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+  .video-slot .placeholder{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:var(--grey);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    text-align:center;
+    padding:3rem 1.4rem 4rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:var(--grey);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="brand">UTP · Lab #8</span>
+  <a href="#introduccion">Introducción</a>
+  <a href="#objetivo">Objetivo</a>
+  <a href="#negocio">Negocio&nbsp;electrónico</a>
+  <a href="#comercio">Comercio&nbsp;electrónico</a>
+  <a href="#banca">Banca&nbsp;electrónica</a>
+  <a href="#infografia">Infografía</a>
+  <a href="#conclusion">Conclusión</a>
+</nav>
+
+<!-- ================= PORTADA ================= -->
+<div class="receipt-wrap">
+  <div class="receipt">
+    <span class="eyebrow">Universidad Tecnológica de Panamá</span>
+    <h1>Negocio, Comercio y Banca Electrónica</h1>
+    <p class="lede" style="margin-bottom:1.2rem;">La transformación digital de los negocios en tiempos de COVID‑19</p>
+    <div class="barcode" style="margin-bottom:1.2rem;"></div>
+    <div class="receipt-row"><span>Curso</span><span>Tecnología de Información y Comunicación</span></div>
+    <div class="receipt-row"><span>Laboratorio</span><span># 8</span></div>
+    <div class="receipt-row"><span>Profesora</span><span>Susan Janette Oliva Rivera</span></div>
+    <div class="receipt-row"><span>Estudiante</span><span>_______________________</span></div>
+    <div class="receipt-row"><span>Grupo</span><span>_______________________</span></div>
+    <div class="receipt-row"><span>Fecha</span><span>_______________________</span></div>
+    <div class="receipt-total"><span>Valor</span><span>100 puntos</span></div>
+    <span class="stamp">✓ investigación entregada</span>
+  </div>
+</div>
+
+<!-- ================= INTRODUCCIÓN ================= -->
+<section id="introduccion">
+  <span class="item-code">COD. 01</span>
+  <h2>Introducción</h2>
+  <p>La pandemia de COVID‑19 obligó a millones de negocios a reinventarse casi de la noche a la mañana. Lo que antes era una opción —vender en línea, ofrecer banca digital, digitalizar procesos internos— se convirtió en una condición de supervivencia. En pocos meses, empresas de todos los tamaños tuvieron que aprender a operar en un entorno donde el contacto físico estaba restringido y el cliente exigía, cada vez más, resolverlo todo desde su teléfono.</p>
+  <p>Este trabajo explora tres conceptos que suelen confundirse pero que responden a lógicas distintas: el <strong>negocio electrónico</strong>, el <strong>comercio electrónico</strong> y la <strong>banca electrónica</strong>. También analiza cómo estos tres frentes se aceleraron durante la pandemia, con datos concretos del caso panameño, y qué lecciones deja esa aceleración para el futuro.</p>
+</section>
+
+<hr class="dotted">
+
+<!-- ================= OBJETIVO ================= -->
+<section id="objetivo">
+  <span class="item-code">COD. 02</span>
+  <h2>Objetivo</h2>
+  <p>Analizar y comprender cómo se logra obtener negocios electrónicos exitosos a través de la web, identificando las diferencias entre negocio electrónico, comercio electrónico y banca electrónica, y evaluando la influencia que cada uno ha tenido durante la pandemia de COVID‑19.</p>
+</section>
+
+<hr class="dotted">
+
+<!-- ================= NEGOCIO ELECTRÓNICO ================= -->
+<section id="negocio">
+  <span class="item-code">COD. 03</span>
+  <h2>Negocio electrónico (e‑business)</h2>
+  <p>El negocio electrónico es el concepto más amplio de los tres. Se refiere a la digitalización de <em>todos</em> los procesos de una organización: no solo la venta, sino también la gestión interna, la relación con proveedores, el manejo de inventarios, la contratación de personal, la atención al cliente y la toma de decisiones basada en datos.</p>
+  <div class="grid3">
+    <div class="card"><h3>Procesos internos</h3><p style="margin:0;">Automatización de contabilidad, nómina, inventarios y flujos de trabajo mediante software empresarial (ERP).</p></div>
+    <div class="card"><h3>Cadena de suministro</h3><p style="margin:0;">Coordinación digital con proveedores y distribuidores en tiempo real.</p></div>
+    <div class="card"><h3>Relación con el cliente</h3><p style="margin:0;">CRM, chatbots y soporte digital para acompañar todo el ciclo de vida del cliente.</p></div>
+  </div>
+  <p style="margin-top:1.3rem;">En otras palabras: <strong>todo comercio electrónico es negocio electrónico, pero no todo negocio electrónico implica vender en línea.</strong> Una fábrica que digitaliza su control de inventarios sin vender directamente al público también está haciendo negocio electrónico.</p>
+</section>
+
+<hr class="dotted">
+
+<!-- ================= COMERCIO ELECTRÓNICO ================= -->
+<section id="comercio">
+  <span class="item-code">COD. 04</span>
+  <h2>Comercio electrónico (e‑commerce)</h2>
+  <p>El comercio electrónico es la compra y venta de bienes o servicios a través de internet. Es un subconjunto del negocio electrónico, enfocado específicamente en la transacción comercial: catálogo, carrito de compra, pasarela de pago y entrega.</p>
+  <div class="card">
+    <h3>Modelos comunes <span class="tag">clasificación</span></h3>
+    <p style="margin:0;"><strong>B2C</strong> (empresa a consumidor): tiendas en línea que venden directo al público, como supermercados o retailers.<br>
+    <strong>B2B</strong> (empresa a empresa): plataformas mayoristas y proveedores industriales.<br>
+    <strong>C2C</strong> (consumidor a consumidor): marketplaces donde particulares venden entre sí, como Mercado Libre.</p>
+  </div>
+  <p style="margin-top:1.3rem;">En Panamá, plataformas internacionales como Mercado Libre y Amazon lideran el tráfico de comercio electrónico, mientras que pequeñas y medianas empresas han adoptado herramientas como Wix y Shopify para construir sus propias tiendas sin grandes inversiones iniciales.</p>
+</section>
+
+<hr class="dotted">
+
+<!-- ================= BANCA ELECTRÓNICA ================= -->
+<section id="banca">
+  <span class="item-code">COD. 05</span>
+  <h2>Banca electrónica</h2>
+  <p>La banca electrónica agrupa los servicios financieros que un banco pone a disposición del cliente a través de canales digitales: banca en línea, aplicaciones móviles, billeteras digitales y pagos sin contacto. Es la infraestructura que hace posible que el comercio electrónico funcione: sin un medio de pago digital confiable, no hay transacción en línea posible.</p>
+  <div class="grid3">
+    <div class="card"><h3>Banca en línea</h3><p style="margin:0;">Consultas de saldo, transferencias y pagos de servicios desde el navegador.</p></div>
+    <div class="card"><h3>Banca móvil y billeteras</h3><p style="margin:0;">Apps como Yappy, Nequi y Mony permiten enviar dinero al instante desde el teléfono, incluso entre personas sin cuenta bancaria tradicional.</p></div>
+    <div class="card"><h3>Pagos digitales</h3><p style="margin:0;">Pasarelas como Páguelo Fácil, PayU Latam y Credicorp Bank procesan los pagos de las tiendas en línea.</p></div>
+  </div>
+</section>
+
+<hr class="dotted">
+
+<!-- ================= INFOGRAFÍA / INFLUENCIA COVID ================= -->
+<section id="infografia" class="infografia">
+  <span class="item-code">COD. 06</span>
+  <h2>La influencia del COVID‑19: el gran acelerador</h2>
+  <p style="max-width:65ch;">El confinamiento cambió de golpe el comportamiento del consumidor panameño. Lo que antes era una búsqueda en internet que terminaba en una tienda física, pasó a resolverse por completo en línea. Estos son algunos de los datos más citados sobre el caso de Panamá:</p>
+
+  <div class="stat-row">
+    <div class="stat"><span class="num">+85%</span><span class="label">crecimiento del comercio electrónico en Panamá durante la cuarentena (La Prensa, 2020)</span></div>
+    <div class="stat"><span class="num">~40%</span><span class="label">crecimiento estimado del e‑commerce panameño en el primer año de pandemia (La Estrella, 2021)</span></div>
+    <div class="stat"><span class="num">80%</span><span class="label">de las búsquedas en internet ya terminan en una compra concretada en línea, frente al 20% previo a la pandemia</span></div>
+    <div class="stat"><span class="num">46%</span><span class="label">de penetración de tarjetas débito/crédito en Panamá antes del COVID‑19 (Findex Global)</span></div>
+  </div>
+
+  <svg id="chart" viewBox="0 0 640 220" role="img" aria-label="Gráfico de crecimiento del comercio electrónico en Panamá antes y durante la pandemia">
+    <line x1="40" y1="180" x2="600" y2="180" stroke="#4a5872" stroke-width="1"/>
+    <!-- bars -->
+    <rect x="90"  y="150" width="70" height="30" fill="#4a5872"/>
+    <rect x="230" y="90"  width="70" height="90" fill="#1F7A6C"/>
+    <rect x="370" y="45"  width="70" height="135" fill="#7FD8C4"/>
+    <rect x="510" y="30"  width="70" height="150" fill="#E2703A"/>
+    <text x="125" y="200" text-anchor="middle" fill="#C9C4B4" font-family="IBM Plex Mono" font-size="11">2019</text>
+    <text x="265" y="200" text-anchor="middle" fill="#C9C4B4" font-family="IBM Plex Mono" font-size="11">Pre‑pandemia</text>
+    <text x="405" y="200" text-anchor="middle" fill="#C9C4B4" font-family="IBM Plex Mono" font-size="11">2020 (+40%)</text>
+    <text x="545" y="200" text-anchor="middle" fill="#C9C4B4" font-family="IBM Plex Mono" font-size="11">Cuarentena (+85%)</text>
+  </svg>
+  <p class="chart-caption">Gráfico ilustrativo elaborado a partir de las cifras citadas por La Prensa (2020) y La Estrella de Panamá (2021) sobre el crecimiento del comercio electrónico en Panamá.</p>
+</section>
+
+<!-- ================= VIDEOS ================= -->
+<section id="videos">
+  <span class="item-code">COD. 07</span>
+  <h2>Recursos audiovisuales</h2>
+  <p>Espacios reservados para ilustrar el tema con video. Pega el código de inserción ("Compartir → Insertar") de YouTube dentro de cada <code>video-slot</code> en el HTML, reemplazando el bloque <code>placeholder</code>.</p>
+  <div class="video-slot">
+    <div class="placeholder">Pega aquí tu video sobre comercio electrónico<br>(reemplaza este bloque por un &lt;iframe&gt; de YouTube)</div>
+  </div>
+  <div class="video-slot">
+    <div class="placeholder">Pega aquí tu video sobre banca electrónica / billeteras digitales<br>(reemplaza este bloque por un &lt;iframe&gt; de YouTube)</div>
+  </div>
+</section>
+
+<hr class="dotted">
+
+<!-- ================= CONCLUSIÓN ================= -->
+<section id="conclusion">
+  <span class="item-code">COD. 08</span>
+  <h2>Conclusión</h2>
+  <p>El negocio, el comercio y la banca electrónica no son tres cosas separadas, sino tres capas de un mismo fenómeno: la digitalización de la manera en que las empresas operan, venden y cobran. La pandemia no inventó estas herramientas, pero comprimió en meses una adopción que hubiera tomado años, dejando claro que la presencia digital dejó de ser un valor agregado para convertirse en un requisito de supervivencia.</p>
+  <p>El reto que queda para las empresas panameñas, especialmente las pequeñas y medianas, ya no es decidir si digitalizarse, sino cómo hacerlo de forma segura, accesible y sostenible una vez que la urgencia de la emergencia sanitaria quedó atrás.</p>
+</section>
+
+<div class="barcode" style="max-width:760px; margin:2rem auto 0;"></div>
+
+<footer>
+  Universidad Tecnológica de Panamá · Tecnología de Información y Comunicación · Laboratorio #8
+</footer>
+
+</body>
+</html>
